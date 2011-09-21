@@ -1,0 +1,146 @@
+#!/bin/bash
+
+# Dependencies:
+
+echo "You may minimize this window"
+echo ""
+echo "Modes:"
+echo ""
+echo "Full screen: automatically capture the entire screen. No action required."
+echo "Window: When crosshair appears, click anywhere in the window you wish to capture"
+echo "Selection: Choose a region on the screen with your mouse"
+
+###############	Settings #####################
+
+# This is the command to install missing dependencies. It is setup for
+# aptitude and Ubuntu by default.
+
+install_command="sudo apt-get -y install scrot xclip zenity imagemagick"
+
+
+# Set this option to use either ftp, imageshack, or none
+# Setting is case sensitive!
+
+mode=imageshack
+
+ftp_hostname=ftp.host.name
+ftp_user=username
+ftp_pass=password
+
+# Set this option to the name of the program you
+# want to open the screenshot with to edit. Set
+# to 0 for none. kolourpaint is a decent program
+# but may need to be installed. 
+# - Default: 0
+
+program=0
+
+# The directory on the server you wish to save to
+# - Example: /graphics/screenshot
+# NOTE: There is no "/" on the end of this setting!
+
+ftp_save_dir=/graphics/screenshot
+
+# The directory on your machine you wish to save to
+# - Example: /home/user/.screenshot
+
+local_save_dir=$HOME/.screenshot
+
+# Quality of image on a scale from 0-100
+# - Default: 80
+
+quality=80
+
+# The prefix to access the file via HTTP if FTP is used
+# - Example: http://www.site.com/graphics
+
+screenshot_url=http://www.site.com/graphics
+
+if [ -d $local_save_dir ] ; then
+  cd $local_save_dir
+else
+  mkdir $local_save_dir
+  cd $local_save_dir
+fi
+
+##############################################
+
+
+install_deps() {
+   zenity --question --text="Missing one or more dependencies (imagemagick, xclip, scrot, zenity). Install dependencies?"
+   if [ "$?" = "0" ]; then
+       echo -e "\nAttempting to install missing dependencies. . ."
+       `$install_command > /dev/null`
+       echo -e "\nInstall complete. Continuing. . .\n"
+   else
+       exit 1
+   fi
+}
+  
+send_ftp() {
+curl ftp://$ftp_hostname/$ftp_save_dir/ --user $ftp_user:$ftp_pass -T $ufile -#
+} 
+
+send_imageshack() {
+  tmpfile=$(mktemp) || exit 1
+  curl -H Expect: -F fileupload="@${ufile}" -F xml=yes http://www.imageshack.us/index.php -# > $tmpfile
+}
+
+install_dep="unans"
+which import > /dev/null
+if [ "$?" = "1" ] ; then
+   install_deps
+fi
+which xclip > /dev/null
+if [ "$?" = "1" ]; then
+   install_deps
+fi
+which scrot > /dev/null
+if [ "$?" = "1" ]; then
+   install_deps
+fi
+which zenity > /dev/null
+if [ "$?" = "1" ]; then
+   install_deps
+fi
+
+ufile=ss_$(date +%b_%d_%Y_%H%M).jpg
+
+action=`zenity --list --column="Choose option" "Full screen" "Window" "Selection"`
+
+if [ "$action" != "Full screen" ] && [ "$action" != "Window" ] && [ "$action" != "Selection" ]; then
+  exit
+fi
+
+sleep .4
+
+# We will capture the screen based on previous selection here
+if [ "$action" = "Full screen" ]; then
+  scrot -q $quality "$ufile"
+elif [ "$action" = "Window" ]; then
+  import $ufile
+else 
+  scrot -q $quality -s "$ufile"
+fi
+
+# Opens a program to edit image, if selected
+if [ "$program" != "0" ]; then
+  $program "$ufile"
+fi
+
+if [ "$mode" = "imageshack" ] ; then
+  send_imageshack #2>&1 | awk '{ print $2; fflush() }' | zenity --progress --text="Uploading..."
+  
+  echo $(cat $tmpfile | grep -E "<image_link>(.*)</image_link>" | sed 's|<image_link>\(.*\)</image_link>|\1|') | xclip -selection clipboard
+  rm -rf $tmpfile
+  zenity --info --text="Upload complete" --title="Screenshot complete"
+elif [ "$mode" = "ftp" ] ; then 
+  send_ftp
+  echo -n "$screenshot_url/$ufile" | xclip -selection clipboard
+  zenity --info --text="Upload complete" --title="Screenshot complete"
+else
+  zenity --info --text="Image ($ufile) saved to $local_save_dir" --title="Saved locally"
+  echo -n "$local_save_dir/$ufile" | xclip -selection clipboard
+fi
+
+exit
