@@ -1,6 +1,17 @@
 #!/bin/bash
 
-# Dependencies:
+#############################################################
+# SSC - Linux screenshot script
+#
+# Take screenshot (window, selection, fullscreen), upload
+# to ftp, imageshack, or none and copy URL/file location
+# to clipboard
+#
+# Dependencies: scrot, xclip, zenity, imagemagick
+#
+# Author: David Ryder
+# Website: http://wildreason.com
+#############################################################
 
 echo "You may minimize this window"
 echo ""
@@ -10,7 +21,7 @@ echo "Full screen: automatically capture the entire screen. No action required."
 echo "Window: When crosshair appears, click anywhere in the window you wish to capture"
 echo "Selection: Choose a region on the screen with your mouse"
 
-###############	Settings #####################
+###############  Settings #####################
 
 # This is the command to install missing dependencies. It is setup for
 # aptitude and Ubuntu by default.
