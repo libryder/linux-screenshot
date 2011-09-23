@@ -26,7 +26,7 @@ echo "Selection: Choose a region on the screen with your mouse"
 # This is the command to install missing dependencies. It is setup for
 # aptitude and Ubuntu by default.
 
-install_command="sudo apt-get -y install scrot xclip zenity imagemagick"
+install_command="gksudo apt-get -y install scrot xclip zenity imagemagick"
 
 
 # Set this option to use either ftp, imageshack, or none
@@ -81,7 +81,7 @@ install_deps() {
    zenity --question --text="Missing one or more dependencies (imagemagick, xclip, scrot, zenity). Install dependencies?"
    if [ "$?" = "0" ]; then
        echo -e "\nAttempting to install missing dependencies. . ."
-       `$install_command > /dev/null`
+      `$install_command > /dev/null`
        echo -e "\nInstall complete. Continuing. . .\n"
    else
        exit 1
