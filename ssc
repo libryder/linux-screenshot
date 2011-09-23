@@ -21,61 +21,7 @@ echo "Full screen: automatically capture the entire screen. No action required."
 echo "Window: When crosshair appears, click anywhere in the window you wish to capture"
 echo "Selection: Choose a region on the screen with your mouse"
 
-###############  Settings #####################
-
-# This is the command to install missing dependencies. It is setup for
-# aptitude and Ubuntu by default.
-
-install_app="gksudo"
-install_command="apt-get --yes install curl scrot xclip zenity imagemagick"
-
-
-# Set this option to use either ftp, imageshack, or none
-# Setting is case sensitive!
-
-mode=imageshack
-
-ftp_hostname=ftp.host.name
-ftp_user=username
-ftp_pass=password
-
-# Set this option to the name of the program you
-# want to open the screenshot with to edit. Set
-# to 0 for none. kolourpaint is a decent program
-# but may need to be installed. 
-# - Default: 0
-
-program=0
-
-# The directory on the server you wish to save to
-# - Example: /graphics/screenshot
-# NOTE: There is no "/" on the end of this setting!
-
-ftp_save_dir=/graphics/screenshot
-
-# The directory on your machine you wish to save to
-# - Example: /home/user/.screenshot
-
-local_save_dir=$HOME/.screenshot
-
-# Quality of image on a scale from 0-100
-# - Default: 80
-
-quality=80
-
-# The prefix to access the file via HTTP if FTP is used
-# - Example: http://www.site.com/graphics
-
-screenshot_url=http://www.site.com/graphics
-
-if [ -d $local_save_dir ] ; then
-  cd $local_save_dir
-else
-  mkdir $local_save_dir
-  cd $local_save_dir
-fi
-
-##############################################
+require 'ssc.cfg'
 
 
 install_deps() {
