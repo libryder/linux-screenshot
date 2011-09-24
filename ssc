@@ -21,7 +21,7 @@ echo "Full screen: automatically capture the entire screen. No action required."
 echo "Window: When crosshair appears, click anywhere in the window you wish to capture"
 echo "Selection: Choose a region on the screen with your mouse"
 
-require 'ssc.cfg'
+source ssc.cfg
 
 
 install_deps() {

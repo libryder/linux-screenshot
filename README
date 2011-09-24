@@ -1,1 +1,40 @@
-<h1>Linux Screenshot</h1>
+#############################################################
+# SSC - Linux screenshot script
+#
+# Take screenshot (window, selection, fullscreen), upload
+# to ftp, imageshack, or none and copy URL/file location
+# to clipboard
+#
+# Dependencies: scrot, xclip, zenity, imagemagick
+#
+# Author: David Ryder
+# Website: http://wildreason.com
+#############################################################
+
+
+Linux screenshot utility written in bash. Arguably, according 
+to purists, this is not a bash script because of the non-bash 
+dependencies used such as scrot, xclip, etc. 
+
+For this reason, I would be open to make this into a 
+Ruby/Python executable with assistance. As is, this utility 
+serves its purpose well. 
+
+Setup is easy:
+
+1) Extract files into directory and in a terminal, cd into it
+2) In the same terminal, run
+
+	chmod +x ssc ssc.cfg
+
+3) Open ssc.cfg and make any modifications. By default, ssc will 
+   upload to imageshack  and save screenshots to ~/.screenshot
+4) Run ssc from the the CLI with ./ssc or create a custom launcher 
+   with the following command:
+	
+	bash -c "/path/to/ssc/ssc" &
+
+This runs bash as a daemon (and exits when upload is complete) so 
+you never have to see the terminal. 
+
+Would love to see any modifications or suggestions!
